@@ -1,0 +1,49 @@
+# Ignore CI build directory
+build/
+xcuserdata
+cmake-build-debug/
+.idea/
+bazel-bin
+bazel-genfiles
+bazel-googletest
+bazel-out
+bazel-testlogs
+# python
+*.pyc
+
+# Visual Studio files
+.vs
+*.sdf
+*.opensdf
+*.VC.opendb
+*.suo
+*.user
+_ReSharper.Caches/
+Win32-Debug/
+Win32-Release/
+x64-Debug/
+x64-Release/
+
+# VSCode files
+.cache/
+cmake-variants.yaml
+
+# Ignore autoconf / automake files
+
+
+# Ignore generated directories.
+
+# macOS files
+.DS_Store
+googletest/.DS_Store
+googletest/xcode/.DS_Store
+
+# Ignore cmake generated directories and files.
+CMakeFiles
+CTestTestfile.cmake
+Makefile
+cmake_install.cmake
+/bin
+/lib
+/Win32
+/CMakeCache.txt
