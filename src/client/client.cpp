@@ -3,6 +3,7 @@
 //
 
 #include "client.h"
+#include "../utils/error_handler.h"
 #include <iostream>
 #include <cstring>
 #include <unistd.h>
@@ -14,8 +15,7 @@ Client::Client(const std::string& serverAddress, int port)
 void Client::createSocket() {
     clientSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSocket == -1) {
-        std::cerr << "Error: Failed to create client socket." << std::endl;
-        exit(1);
+        ErrorHandler::handleError("Error: Failed to create socket.");
     }
 }
 
@@ -27,9 +27,8 @@ void Client::configureServerAddress() {
 
 void Client::connectToServerSocket() {
     if (connect(clientSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
-        std::cerr << "Error: Failed to connect to server." << std::endl;
+        ErrorHandler::handleError("Error: Failed to connect to server.");
         close(clientSocket);
-        exit(1);
     }
 
     std::cout << "Connected to server." << std::endl;
