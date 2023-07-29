@@ -5,12 +5,14 @@
 #include "server.h"
 #include "../utils/error_handler.h"
 #include <iostream>
-#include <cstring>
+#include <fcntl.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <sys/epoll.h>
+#include <vector>
 
-Server::Server(int port) : port(port), serverSocket(-1), clientSocket(-1) {}
+Server::Server(int port) : port(port), serverSocket(-1) {}
 
 void Server::createSocket() {
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -39,40 +41,79 @@ void Server::listenForConnections() {
 }
 
 void Server::acceptClient() {
-    socklen_t clientAddrSize = sizeof(clientAddr);
-    clientSocket = accept(serverSocket, (struct sockaddr *) &clientAddr, &clientAddrSize);
-    if (clientSocket < 0) {
-        ErrorHandler::handleError("Failed to accept client connection.");
-        close(serverSocket);
+    int epollFd = epoll_create1(0);
+    if (epollFd == -1) {
+        ErrorHandler::handleError("Failed to create epoll instance.");
     }
-    std::cout << "Client connected." << std::endl;
+
+    struct epoll_event event;
+    event.data.fd = serverSocket;
+    event.events = EPOLLIN | EPOLLET; // Enable edge-triggered mode
+    if (epoll_ctl(epollFd, EPOLL_CTL_ADD, serverSocket, &event) == -1) {
+        ErrorHandler::handleError("Failed to add server socket to epoll instance.");
+    }
+
+    std::vector<struct epoll_event> events(10); // You can adjust the size as needed
+
+    while (true) {
+        int numEvents = epoll_wait(epollFd, events.data(), events.size(), 500);
+        if (numEvents == -1) {
+            ErrorHandler::handleError("Failed in epoll_wait.");
+        } else if (numEvents == 0) {
+            // Timeout, no events
+            // Perform other tasks or checks, if needed
+            continue;
+        }
+
+        for (int i = 0; i < numEvents; ++i) {
+            if (events[i].data.fd == serverSocket) {
+                handleNewConnection(epollFd);
+            } else {
+                handleClientData(events[i].data.fd);
+            }
+        }
+    }
+    close(epollFd);
 }
 
-void Server::communicate() {
-    char buffer[1024];
-    int bytesReceived = 0;
+void Server::handleNewConnection(int epollFd) {
     while (true) {
-        // Receive message from client
-        bytesReceived = recv(clientSocket, buffer, 1024, 0);
-        if (bytesReceived < 0) {
-            ErrorHandler::handleError("Failed to receive message from client.");
-            close(serverSocket);
-            close(clientSocket);
+        socklen_t clientAddrSize = sizeof(clientAddr);
+        int clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
+        if (clientSocket == -1) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                // No more pending connections
+                break;
+            } else {
+                ErrorHandler::handleError("Failed to accept client connection.");
+            }
         }
-        if (bytesReceived == 0) {
-            std::cout << "Client disconnected." << std::endl;
-            break;
-        }
-        std::cout << "Client: " << buffer << std::endl;
 
-        // Send message to client
-        std::cout << "Server: ";
-        std::cin.getline(buffer, 1024);
-        if (send(clientSocket, buffer, strlen(buffer), 0) < 0) {
-            ErrorHandler::handleError("Failed to send message to client.");
-            close(serverSocket);
-            close(clientSocket);
+        std::cout << "Client connected. Socket fd: " << clientSocket << std::endl;
+
+        // Set the client socket to non-blocking mode
+        int flags = fcntl(clientSocket, F_GETFL, 0);
+        fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK);
+
+        struct epoll_event event;
+        event.data.fd = clientSocket;
+        event.events = EPOLLIN | EPOLLET; // Enable edge-triggered mode
+        if (epoll_ctl(epollFd, EPOLL_CTL_ADD, clientSocket, &event) == -1) {
+            ErrorHandler::handleError("Failed to add client socket to epoll.");
         }
+    }
+}
+
+void Server::handleClientData(int clientSocket) {
+    char buffer[1024];
+    int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
+    if (bytesRead <= 0) {
+        // Client closed the connection or an error occurred
+        std::cout << "Client disconnected. Socket fd: " << clientSocket << std::endl;
+        close(clientSocket);
+    } else {
+        // Process client data, if needed
+        // ...
     }
 }
 
@@ -81,11 +122,9 @@ void Server::start() {
     bindSocket();
     listenForConnections();
     acceptClient();
-    communicate();
 }
 
 Server::~Server() {
     // Clean up resources
-    close(clientSocket);
     close(serverSocket);
 }

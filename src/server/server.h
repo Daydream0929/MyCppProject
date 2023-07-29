@@ -18,7 +18,6 @@ private:
     // Declare private members and helper functions here
     int port;
     int serverSocket;
-    int clientSocket;
     sockaddr_in serverAddr;
     sockaddr_in clientAddr;
 
@@ -26,7 +25,9 @@ private:
     void bindSocket();
     void listenForConnections();
     void acceptClient();
-    void communicate();
+    void handleNewConnection(int epollFd);
+    void handleClientData(int epollFd);
+
 };
 
 #endif //MYCPPPROJECT_SERVER_H
