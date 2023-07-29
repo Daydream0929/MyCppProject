@@ -190,7 +190,7 @@ See the [open issues](https://github.com/Daydream0929/MyCppProject/issues) for a
 
 - [X] server-client model
 - [X] error_handler
-- [] epoll
+- [ ] epoll
 
 
 See the [open issues](https://github.com/Daydream0929/MyCppProject/issues) for a full list of proposed features (and known issues).
