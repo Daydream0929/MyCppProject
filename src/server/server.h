@@ -11,8 +11,9 @@ class Server {
 public:
 
     Server(int port);
-    void start();
-    ~Server();
+    // 声明 start() 函数为虚函数
+    virtual void start();
+    virtual ~Server();
 
 private:
     // Declare private members and helper functions here

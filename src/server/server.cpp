@@ -68,12 +68,11 @@ void Server::acceptClient() {
         for (int i = 0; i < numEvents; ++i) {
             if (events[i].data.fd == serverSocket) {
                 handleNewConnection(epollFd);
-            } else {
+            } else if(events[i].events & (EPOLLIN | EPOLLET)) {
                 handleClientData(events[i].data.fd);
             }
         }
     }
-    close(epollFd);
 }
 
 void Server::handleNewConnection(int epollFd) {
@@ -105,15 +104,36 @@ void Server::handleNewConnection(int epollFd) {
 }
 
 void Server::handleClientData(int clientSocket) {
+    // Set the client socket to non-blocking mode
+    int flags = fcntl(clientSocket, F_GETFL, 0);
+    fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK);
+
     char buffer[1024];
-    int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
-    if (bytesRead <= 0) {
-        // Client closed the connection or an error occurred
-        std::cout << "Client disconnected. Socket fd: " << clientSocket << std::endl;
-        close(clientSocket);
-    } else {
-        // Process client data, if needed
-        // ...
+    int bytesRead = 0;
+    while (true) {
+        // 在非阻塞模式下，使用 recv() 时需要考虑 EAGAIN 或 EWOULDBLOCK 错误
+        bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
+
+        if (bytesRead == -1) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                // 没有数据可读，等待下一个事件通知
+                break;
+            } else {
+                ErrorHandler::handleError("Error: Failed to receive data from client.");
+                close(clientSocket);
+                return;
+            }
+        } else if (bytesRead == 0) {
+            // 客户端关闭了连接
+            std::cout << "Client closed the connection." << std::endl;
+            close(clientSocket);
+            return;
+        }
+
+        // 在这里处理接收到的数据
+        // 例如，可以将数据发送回客户端
+        buffer[bytesRead] = '\0';
+        send(clientSocket, buffer, bytesRead, 0);
     }
 }
 

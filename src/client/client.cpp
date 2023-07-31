@@ -75,33 +75,44 @@ void Client::communicate() {
             break;
         }
 
-        int bytesSent = send(clientSocket, buffer, strlen(buffer), 0);
-        if (bytesSent == -1) {
-            if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                // Send buffer is full, try again later
-                continue;
-            } else {
-                ErrorHandler::handleError("Error: Failed to send data to the server.");
-                break;
+        // Send data in non-blocking mode
+        int totalBytesSent = 0;
+        int messageLength = strlen(buffer);
+        while (totalBytesSent < messageLength) {
+            int bytesSent = send(clientSocket, buffer + totalBytesSent, messageLength - totalBytesSent, 0);
+            if (bytesSent == -1) {
+                if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                    // Send buffer is full, try again later
+                    continue;
+                } else {
+                    ErrorHandler::handleError("Error: Failed to send data to the server.");
+                    break;
+                }
             }
+            totalBytesSent += bytesSent;
         }
 
-        int bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
-        if (bytesRead == -1) {
-            if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                // No data available to read, try again later
-                continue;
-            } else {
-                ErrorHandler::handleError("Error: Failed to receive data from the server.");
+        // Receive data in non-blocking mode
+        int totalBytesReceived = 0;
+        while (totalBytesReceived < sizeof(buffer) - 1) {
+            int bytesRead = recv(clientSocket, buffer + totalBytesReceived, sizeof(buffer) - 1 - totalBytesReceived, 0);
+            if (bytesRead == -1) {
+                if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                    // No data available to read, try again later
+                    break;
+                } else {
+                    ErrorHandler::handleError("Error: Failed to receive data from the server.");
+                    break;
+                }
+            } else if (bytesRead == 0) {
+                // Server closed the connection
+                std::cout << "Server closed the connection." << std::endl;
                 break;
             }
-        } else if (bytesRead == 0) {
-            // Server closed the connection
-            std::cout << "Server closed the connection." << std::endl;
-            break;
+            totalBytesReceived += bytesRead;
         }
 
-        buffer[bytesRead] = '\0';
+        buffer[totalBytesReceived] = '\0';
         std::cout << "Server replied: " << buffer << std::endl;
     }
 }
