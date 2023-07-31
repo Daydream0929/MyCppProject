@@ -4,14 +4,17 @@
 
 #include "server_poll.h"
 
-ServerPoll::ServerPoll(int port) : Server(port) {
+ServerPoll::ServerPoll(int port) : Server(port)
+{
     // 在这里初始化 poll 相关的参数
 }
 
-ServerPoll::~ServerPoll() {
+ServerPoll::~ServerPoll()
+{
     // 在这里清理 poll 相关的资源
 }
 
-void ServerPoll::start() {
+void ServerPoll::Start()
+{
     // 在这里实现 poll 模式的服务器逻辑
 }

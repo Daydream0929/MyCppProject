@@ -3,10 +3,12 @@
 //
 
 #include "error_handler.h"
-#include <iostream>
-#include <cstdlib>
 
-void ErrorHandler::handleError(const std::string& message) {
+#include <cstdlib>
+#include <iostream>
+
+void ErrorHandler::handleError(const std::string& message)
+{
     std::cerr << "Error: " << message << std::endl;
     exit(1);
 }

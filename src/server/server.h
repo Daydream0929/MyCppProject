@@ -7,28 +7,27 @@
 
 #include <arpa/inet.h>
 
-class Server {
+class Server
+{
 public:
-
-    Server(int port);
+    explicit Server(int port);
     // 声明 start() 函数为虚函数
-    virtual void start();
+    virtual void Start();
     virtual ~Server();
 
 private:
     // Declare private members and helper functions here
-    int port;
-    int serverSocket;
-    sockaddr_in serverAddr;
-    sockaddr_in clientAddr;
+    int         port;
+    int         server_socket;
+    sockaddr_in server_addr;
+    sockaddr_in client_addr;
 
-    void createSocket();
-    void bindSocket();
-    void listenForConnections();
-    void acceptClient();
-    void handleNewConnection(int epollFd);
-    void handleClientData(int epollFd);
-
+    void CreateSocket();
+    void BindSocket();
+    void ListenForConnections();
+    void AcceptClient();
+    void HandleNewConnection(int epollFd);
+    void HandleClientData(int epollFd);
 };
 
-#endif //MYCPPPROJECT_SERVER_H
+#endif  // MYCPPPROJECT_SERVER_H

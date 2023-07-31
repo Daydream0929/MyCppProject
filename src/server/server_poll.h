@@ -7,15 +7,14 @@
 
 #include "server.h"
 
-class ServerPoll : public Server {
+class ServerPoll : public Server
+{
 public:
-    ServerPoll(int port);
+    explicit ServerPoll(int port);
     virtual ~ServerPoll();
 
     // 实现基类的虚函数
-    virtual void start() override;
+    virtual void Start() override;
 };
 
-
-
-#endif //MYCPPPROJECT_SERVER_POLL_H
+#endif  // MYCPPPROJECT_SERVER_POLL_H

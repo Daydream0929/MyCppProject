@@ -7,14 +7,14 @@
 
 #include "server.h"
 
-class ServerSelect : public Server {
+class ServerSelect : public Server
+{
 public:
-    ServerSelect(int port);
+    explicit ServerSelect(int port);
     virtual ~ServerSelect();
 
     // 实现基类的虚函数
-    virtual void start() override;
+    virtual void Start() override;
 };
 
-
-#endif //MYCPPPROJECT_SERVER_SELECT_H
+#endif  // MYCPPPROJECT_SERVER_SELECT_H

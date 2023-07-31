@@ -7,13 +7,14 @@
 
 #include "server.h"
 
-class ServerEpoll : public Server {
+class ServerEpoll : public Server
+{
 public:
-    ServerEpoll(int port);
-    virtual ~ServerEpoll();
+    explicit ServerEpoll(int port);
+    ~ServerEpoll() override;
 
     // 实现基类的虚函数
-    virtual void start() override;
+    virtual void Start() override;
 };
 
-#endif //MYCPPPROJECT_SERVER_EPOLL_H
+#endif  // MYCPPPROJECT_SERVER_EPOLL_H

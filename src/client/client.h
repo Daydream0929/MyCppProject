@@ -5,12 +5,14 @@
 #ifndef MYCPPPROJECT_CLIENT_H
 #define MYCPPPROJECT_CLIENT_H
 
-#include <string>
 #include <arpa/inet.h>
 
-class Client {
+#include <string>
+
+class Client
+{
 public:
-    Client(const std::string& serverAddress, int port);
+    Client(const std::string& server_address, int port);
     void connectToServer();
     void communicate();
     ~Client();
@@ -18,13 +20,13 @@ public:
 private:
     // Declare private members and helper functions here
     std::string serverAddress;
-    int port;
-    int clientSocket;
-    sockaddr_in serverAddr;
+    int         port;
+    int         client_socket;
+    sockaddr_in server_addr;
 
-    void createSocket();
-    void configureServerAddress();
-    void connectToServerSocket();
+    void CreateSocket();
+    void ConfigureServerAddress();
+    void ConnectToServerSocket();
 };
 
-#endif //MYCPPPROJECT_CLIENT_H
+#endif  // MYCPPPROJECT_CLIENT_H
