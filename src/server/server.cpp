@@ -20,7 +20,7 @@ Server::Server(int port) : port(port), server_socket(-1) {}
 void Server::CreateSocket()
 {
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_socket == -1) { ErrorHandler::handleError("Failed to create server socket."); }
+    if (server_socket == -1) { ErrorHandler::HandleError("Failed to create server socket."); }
 }
 
 void Server::BindSocket()
@@ -31,7 +31,7 @@ void Server::BindSocket()
 
     if (bind(server_socket, (struct sockaddr*) &server_addr, sizeof(server_addr)) < 0)
     {
-        ErrorHandler::handleError("Failed to bind server socket.");
+        ErrorHandler::HandleError("Failed to bind server socket.");
         close(server_socket);
     }
 }
@@ -40,7 +40,7 @@ void Server::ListenForConnections()
 {
     if (listen(server_socket, 5) < 0)
     {
-        ErrorHandler::handleError("Failed to listen for connections.");
+        ErrorHandler::HandleError("Failed to listen for connections.");
         close(server_socket);
     }
     std::cout << "Server started. Waiting for connections..." << std::endl;
@@ -49,14 +49,14 @@ void Server::ListenForConnections()
 void Server::AcceptClient()
 {
     int epollFd = epoll_create1(0);
-    if (epollFd == -1) { ErrorHandler::handleError("Failed to create epoll instance."); }
+    if (epollFd == -1) { ErrorHandler::HandleError("Failed to create epoll instance."); }
 
     struct epoll_event event;
     event.data.fd = server_socket;
     event.events  = EPOLLIN | EPOLLET;  // Enable edge-triggered mode
     if (epoll_ctl(epollFd, EPOLL_CTL_ADD, server_socket, &event) == -1)
     {
-        ErrorHandler::handleError("Failed to add server socket to epoll instance.");
+        ErrorHandler::HandleError("Failed to add server socket to epoll instance.");
     }
 
     std::vector<struct epoll_event> events(10);  // You can adjust the size as needed
@@ -64,7 +64,7 @@ void Server::AcceptClient()
     while (true)
     {
         int num_events = epoll_wait(epollFd, events.data(), events.size(), 500);
-        if (num_events == -1) { ErrorHandler::handleError("Failed in epoll_wait."); }
+        if (num_events == -1) { ErrorHandler::HandleError("Failed in epoll_wait."); }
         else if (num_events == 0)
         {
             // Timeout, no events
@@ -97,7 +97,7 @@ void Server::HandleNewConnection(int epollFd)
                 // No more pending connections
                 break;
             }
-            else { ErrorHandler::handleError("Failed to accept client connection."); }
+            else { ErrorHandler::HandleError("Failed to accept client connection."); }
         }
 
         std::cout << "Client connected. Socket fd: " << client_socket << std::endl;
@@ -111,7 +111,7 @@ void Server::HandleNewConnection(int epollFd)
         event.events  = EPOLLIN | EPOLLET;  // Enable edge-triggered mode
         if (epoll_ctl(epollFd, EPOLL_CTL_ADD, client_socket, &event) == -1)
         {
-            ErrorHandler::handleError("Failed to add client socket to epoll.");
+            ErrorHandler::HandleError("Failed to add client socket to epoll.");
         }
     }
 }
@@ -138,7 +138,7 @@ void Server::HandleClientData(int client_socket)
             }
             else
             {
-                ErrorHandler::handleError("Error: Failed to receive data from client.");
+                ErrorHandler::HandleError("Error: Failed to receive data from client.");
                 close(client_socket);
                 return;
             }

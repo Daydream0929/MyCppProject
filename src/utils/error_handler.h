@@ -10,7 +10,7 @@
 class ErrorHandler
 {
 public:
-    static void handleError(const std::string& message);
+    static void HandleError(const std::string& message);
 };
 
 #endif  // MYCPPPROJECT_ERROR_HANDLER_H

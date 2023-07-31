@@ -18,7 +18,7 @@ Client::Client(const std::string& server_address, int port)
 void Client::CreateSocket()
 {
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (client_socket == -1) { ErrorHandler::handleError("Error: Failed to create socket."); }
+    if (client_socket == -1) { ErrorHandler::HandleError("Error: Failed to create socket."); }
 
     // Set the client socket to non-blocking mode
     int flags = fcntl(client_socket, F_GETFL, 0);
@@ -38,7 +38,7 @@ void Client::ConnectToServerSocket()
     {
         if (errno != EINPROGRESS)
         {
-            ErrorHandler::handleError("Error: Failed to connect to server.");
+            ErrorHandler::HandleError("Error: Failed to connect to server.");
             close(client_socket);
         }
     }
@@ -56,12 +56,12 @@ void Client::ConnectToServerSocket()
     int select_result = select(client_socket + 1, NULL, &write_set, NULL, &timeout);
     if (select_result == -1)
     {
-        ErrorHandler::handleError("Error: select() failed.");
+        ErrorHandler::HandleError("Error: select() failed.");
         close(client_socket);
     }
     else if (select_result == 0)
     {
-        ErrorHandler::handleError("Error: Connection timed out.");
+        ErrorHandler::HandleError("Error: Connection timed out.");
         close(client_socket);
     }
 
@@ -70,7 +70,7 @@ void Client::ConnectToServerSocket()
     getsockopt(client_socket, SOL_SOCKET, SO_ERROR, &socket_error, &socketErrorSize);
     if (socket_error != 0)
     {
-        ErrorHandler::handleError("Error: Failed to connect to server.");
+        ErrorHandler::HandleError("Error: Failed to connect to server.");
         close(client_socket);
     }
 
@@ -103,7 +103,7 @@ void Client::communicate()
                 }
                 else
                 {
-                    ErrorHandler::handleError("Error: Failed to send data to the server.");
+                    ErrorHandler::HandleError("Error: Failed to send data to the server.");
                     break;
                 }
             }
@@ -125,7 +125,7 @@ void Client::communicate()
                 }
                 else
                 {
-                    ErrorHandler::handleError("Error: Failed to receive data from the server.");
+                    ErrorHandler::HandleError("Error: Failed to receive data from the server.");
                     break;
                 }
             }
