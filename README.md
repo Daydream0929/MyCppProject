@@ -180,6 +180,27 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [ ] Fork a good Cpp project and contribute to it
 - [ ] Multi-language Support
     - [ ] Chinese
+```
+当您想要学习 Linux 下的 C/C++ 和 Python 编程，并且通过 WebServer 和 Django 两个项目相结合来实战学习时，以下是一些可能的项目思路：
+
+1. 实现一个简单的 WebServer：作为起点，您可以先实现一个简单的 WebServer，它能够接收 HTTP 请求，返回静态网页，并支持基本的请求方法（GET、POST）。这个项目可以帮助您熟悉 C/C++ 网络编程和 HTTP 协议处理。
+
+2. WebServer 支持动态内容：将您的 WebServer 扩展，使其能够处理动态内容。您可以实现一个简单的模板引擎，从数据库或文件中读取数据，将数据动态嵌入到 HTML 页面中，并将其返回给客户端。这将涉及到 C/C++ 的字符串处理和文件读写。
+
+3. 添加多线程支持：将多线程功能添加到您的 WebServer 中，以支持并发请求。这样可以提高 WebServer 的并发性能，并使其能够同时处理多个客户端请求。
+
+4. 实现基本的用户认证：为您的 WebServer 添加基本的用户认证功能，使得用户需要登录才能访问某些受保护的页面。这可以帮助您熟悉密码加密和用户身份验证。
+
+5. 使用 CGI 执行 Python 脚本：为了将 C/C++ 项目与 Django 项目结合起来，您可以在 C/C++ WebServer 中实现一个简单的 CGI（Common Gateway Interface）解析器，用于执行 Python 脚本。这样，您可以通过在 WebServer 中调用 Python 脚本，实现 C/C++ 项目和 Django 项目之间的交互。
+
+6. 使用 Django 构建一个 Web 应用：现在，您可以开始学习 Django，并使用它构建一个简单的 Web 应用。这个应用可以是一个博客、待办事项列表、社交媒体平台等等。在这个阶段，您可以专注于学习 Django 的模型、视图、模板和路由系统。
+
+7. WebServer 作为 Django 的插件：将您的 WebServer 作为 Django 的插件，并在 Django 项目中调用它。这样，您可以在 Django 中使用您之前实现的 C/C++ WebServer 来处理一部分请求，同时在 Django 中处理其他请求。
+
+8. 实现高级功能：根据您的兴趣和需求，可以进一步扩展您的 C/C++ WebServer 和 Django 项目，添加更多的功能，例如用户评论、图片上传、搜索功能等等。
+
+这些是一些项目思路，您可以根据自己的学习进度和兴趣，逐步完成这些项目，并在实战中学习 C/C++ 和 Python 编程以及 Web 开发技术。同时，尝试将两个项目相结合，可以让您在实践中更好地理解和应用所学知识。祝您学习愉快，取得进步！
+```
 
 See the [open issues](https://github.com/Daydream0929/MyCppProject/issues) for a full list of proposed features (and known issues).
 
