@@ -11,23 +11,27 @@ class Server
 {
 public:
     explicit Server(int port);
-    // 声明 start() 函数为虚函数
-    virtual void Start();
-    virtual ~Server();
-
-private:
-    // Declare private members and helper functions here
-    int         port;
-    int         server_socket;
-    sockaddr_in server_addr;
-    sockaddr_in client_addr;
 
     void CreateSocket();
+
     void BindSocket();
+
     void ListenForConnections();
-    void AcceptClient();
-    void HandleNewConnection(int epollFd);
-    void HandleClientData(int epollFd);
+
+    // 声明 虚函数
+    virtual void Start()        = 0;
+    virtual void AcceptClient() = 0;
+
+    virtual void HandleNewConnection(int epollFd) = 0;
+
+    virtual void HandleClientData(int epollFd) = 0;
+    virtual ~Server();
+
+protected:
+    int         port;
+    int         server_socket;
+    sockaddr_in client_addr;
+    sockaddr_in server_addr;
 };
 
 #endif  // MYCPPPROJECT_SERVER_H

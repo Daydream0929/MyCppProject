@@ -31,7 +31,7 @@ int main()
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // 创建多个客户端线程
-    const int                numClients = 5;  // 设置要创建的客户端数量
+    const int                numClients = 1;  // 设置要创建的客户端数量
     std::vector<std::thread> clientThreads;
     clientThreads.reserve(numClients);
     for (int i = 0; i < numClients; ++i) { clientThreads.emplace_back(testClient); }
