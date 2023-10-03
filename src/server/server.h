@@ -19,12 +19,12 @@ public:
     void ListenForConnections();
 
     // 声明 虚函数
-    virtual void Start()        = 0;
-    virtual void AcceptClient() = 0;
+    virtual void Start()        ;
+    virtual void AcceptClient() ;
 
-    virtual void HandleNewConnection(int epollFd) = 0;
+    virtual void HandleNewConnection(int epollFd);
 
-    virtual void HandleClientData(int epollFd) = 0;
+    virtual void HandleClientData(int epollFd);
     virtual ~Server();
 
 protected:

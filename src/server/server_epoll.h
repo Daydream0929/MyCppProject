@@ -14,11 +14,11 @@ public:
     ~ServerEpoll() override;
 
     // 实现基类的虚函数
-    void AcceptClient() override = 0;
+    void AcceptClient() override;
 
-    void HandleNewConnection(int epollFd) override = 0;
+    void HandleNewConnection(int epollFd) override;
 
-    void HandleClientData(int epollFd) override = 0;
+    void HandleClientData(int epollFd) override;
     void Start() override;
 };
 
